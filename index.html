@@ -270,7 +270,7 @@ async function submitCurrent(){
 async function fetchRows(){
   let rows=[];
   try{
-    const res=await fetch(CSV_URL+'&t='+Date.now());
+    const res=await fetch(CSV_URL);
     const text=await res.text();
     text.trim().split('\n').slice(1).forEach(line=>{
       const cols=line.split(',');
