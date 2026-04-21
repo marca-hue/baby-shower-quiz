@@ -152,7 +152,7 @@ body{font-family:sans-serif;background:#fff;}
 </div>
 
 <script>
-
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbyXjK7jZorR1kfzjdove6iiD74oH_1KZAYtfxXoskxligweFlWjo67w2vdtLKTUlyqL/exec';
 const questions=[
   {q:"Would you rather...",a:"Change 10 diapers in a row",b:"Wake up 3 times a night for a week"},
   {q:"Would you rather...",a:"Step on a Lego barefoot",b:"Get spit up on right before a meeting"},
@@ -217,18 +217,38 @@ function startQuiz(){
   playerName=val;phase='quiz';revealed=false;render();
 }
 
+async function postData(payload){
+  try{
+    await fetch(SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+  }catch(e){ console.log('post error',e); }
+  await new Promise(r=>setTimeout(r,800));
+}
+
+async function fetchRows(){
+  try{
+    const res=await fetch(SCRIPT_URL+'?t='+Date.now());
+    const data=await res.json();
+    console.log('fetchRows got',data.length,'rows');
+    return data;
+  }catch(e){
+    console.log('fetchRows error',e);
+    return [];
+  }
+}
+
 async function seedDemo(){
   const btn=document.getElementById('seedBtn');
   const status=document.getElementById('seedStatus');
   btn.disabled=true;
-  status.textContent='Seeding...';
   for(let i=0;i<demoPlayers.length;i++){
+    status.textContent=`Seeding ${i+1} of ${demoPlayers.length}...`;
     const ans=Array.from({length:TOTAL},()=>Math.random()<0.5?'A':'B');
-    try{
-      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:demoPlayers[i],answers:ans})});
-    }catch(e){}
-    await new Promise(r=>setTimeout(r,600));
-    status.textContent=`Seeded ${i+1} of ${demoPlayers.length}...`;
+    await postData({name:demoPlayers[i],answers:ans});
   }
   btn.disabled=false;
   status.textContent='Done! 5 fake players added. Clear them before the real shower.';
@@ -238,12 +258,9 @@ async function clearDemo(){
   const btn=document.getElementById('clearBtn');
   const status=document.getElementById('seedStatus');
   btn.disabled=true;
-  status.textContent='Clearing...';
   for(let i=0;i<demoPlayers.length;i++){
-    try{
-      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:demoPlayers[i],answers:Array(TOTAL).fill('DELETE'),delete:true})});
-    }catch(e){}
-    await new Promise(r=>setTimeout(r,400));
+    status.textContent=`Clearing ${i+1} of ${demoPlayers.length}...`;
+    await postData({name:demoPlayers[i],answers:Array(TOTAL).fill('DELETE'),delete:true});
   }
   btn.disabled=false;
   status.textContent='Done! Double-check the Sheet for any remaining Test_ rows.';
@@ -253,27 +270,10 @@ async function sel(c){
   answers[current]=c;
   revealed=false;
   renderQuiz(document.getElementById('app'));
-  await submitCurrent();
+  await postData({name:playerName,answers});
   cachedRows=await fetchRows();
   revealed=true;
   renderQuiz(document.getElementById('app'));
-}
-
-async function submitCurrent(){
-  try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:playerName,answers})});
-  }catch(e){}
-  await new Promise(r=>setTimeout(r,700));
-}
-
-async function fetchRows(){
-  let rows=[];
-  try{
-    const res=await fetch(SCRIPT_URL);
-    const data=await res.json();
-    rows=data;
-  }catch(e){ console.log('fetchRows error',e); }
-  return rows;
 }
 
 function buildReveal(rows,qi,isNina){
@@ -282,7 +282,7 @@ function buildReveal(rows,qi,isNina){
   const tot=nA.length+nB.length||1;
   const ap=Math.round(nA.length/tot*100),bp=100-ap;
   const fa=isNina?'nina-a':'',fb=isNina?'nina-b':'b';
-  const tag=(n)=>`<span class="name-tag${isNina?' nina':''}${n===playerName?' you':''}">${n}</span>`;
+  const tag=n=>`<span class="name-tag${isNina?' nina':''}${n===playerName?' you':''}">${n}</span>`;
   return`<hr class="reveal-divider"/>
     <div class="reveal-label">How everyone voted so far</div>
     <div class="reveal-bar-row">
