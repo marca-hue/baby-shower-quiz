@@ -225,7 +225,7 @@ async function seedDemo(){
   for(let i=0;i<demoPlayers.length;i++){
     const ans=Array.from({length:TOTAL},()=>Math.random()<0.5?'A':'B');
     try{
-      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:demoPlayers[i],answers:ans})});
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:demoPlayers[i],answers:ans})});
     }catch(e){}
     await new Promise(r=>setTimeout(r,600));
     status.textContent=`Seeded ${i+1} of ${demoPlayers.length}...`;
@@ -241,7 +241,7 @@ async function clearDemo(){
   status.textContent='Clearing...';
   for(let i=0;i<demoPlayers.length;i++){
     try{
-      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:demoPlayers[i],answers:Array(TOTAL).fill('DELETE'),delete:true})});
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:demoPlayers[i],answers:Array(TOTAL).fill('DELETE'),delete:true})});
     }catch(e){}
     await new Promise(r=>setTimeout(r,400));
   }
@@ -261,7 +261,7 @@ async function sel(c){
 
 async function submitCurrent(){
   try{
-    await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:playerName,answers})});
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:playerName,answers})});
   }catch(e){}
   await new Promise(r=>setTimeout(r,700));
 }
