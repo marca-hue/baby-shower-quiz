@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Would You Rather: Baby Edition</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:sans-serif;background:#fff;}
+.wrap{padding:0 0 2rem;max-width:640px;margin:0 auto;}
+.hero{position:relative;height:120px;overflow:hidden;}
+.hero-title{position:absolute;top:0;left:0;right:0;z-index:2;text-align:center;padding-top:28px;}
+.hero-title h1{font-size:22px;font-weight:500;color:#72243E;}
+.hero-title p{font-size:13px;color:#993556;margin-top:3px;}
+.progress-bar-track{height:5px;background:#F4C0D1;margin:0 0 1.25rem;}
+.progress-bar-fill{height:100%;background:#D4537E;transition:width 0.4s ease;}
+.content{padding:0 1rem;}
+.card{background:#fff;border:1px solid #F4C0D1;border-radius:16px;padding:1.25rem;margin-bottom:1rem;}
+.q-label{font-size:11px;color:#993556;margin-bottom:6px;letter-spacing:.04em;}
+.q-text{font-size:16px;font-weight:500;color:#4B1528;margin-bottom:4px;}
+.q-sub{font-size:13px;color:#D4537E;font-style:italic;margin-bottom:1rem;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt-btn{background:#FFF5F8;border:1px solid #F4C0D1;border-radius:10px;padding:12px 14px;font-size:13px;color:#4B1528;cursor:pointer;text-align:left;line-height:1.45;font-family:sans-serif;}
+.opt-btn:hover{background:#FBEAF0;}
+.opt-btn.sel{background:#FBEAF0;border-color:#D4537E;}
+.opt-label{display:inline-block;font-weight:500;font-size:10px;background:#F4C0D1;color:#72243E;border-radius:4px;padding:2px 6px;margin-bottom:5px;}
+.nina-badge{display:inline-block;font-size:11px;background:#EEEDFE;color:#3C3489;border-radius:4px;padding:2px 8px;margin-bottom:8px;font-weight:500;}
+.reveal-divider{border:none;border-top:1px solid #F4C0D1;margin:1rem 0;}
+.reveal-label{font-size:11px;color:#993556;letter-spacing:.04em;margin-bottom:8px;font-weight:500;}
+.reveal-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.reveal-bar-lbl{width:14px;font-size:12px;font-weight:500;color:#993556;flex-shrink:0;}
+.reveal-bar-track{flex:1;height:22px;background:#FFF0F5;border-radius:5px;overflow:hidden;}
+.reveal-bar-fill{height:100%;border-radius:5px;background:#D4537E;display:flex;align-items:center;min-width:0;}
+.reveal-bar-fill.b{background:#ED93B1;}
+.reveal-bar-fill.nina-a{background:#7F77DD;}
+.reveal-bar-fill.nina-b{background:#AFA9EC;}
+.reveal-bar-text{font-size:11px;color:#fff;padding:0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.reveal-pct{font-size:12px;color:#993556;width:34px;text-align:right;flex-shrink:0;}
+.reveal-names{font-size:11px;margin-bottom:2px;line-height:1.8;padding-left:22px;}
+.name-tag{display:inline-block;background:#FBEAF0;border:1px solid #F4C0D1;border-radius:4px;padding:1px 6px;margin:1px 2px;color:#72243E;}
+.name-tag.you{background:#D4537E;border-color:#D4537E;color:#fff;font-weight:500;}
+.name-tag.nina{background:#EEEDFE;border-color:#CECBF6;color:#3C3489;}
+.name-tag.nina.you{background:#7F77DD;border-color:#7F77DD;color:#fff;}
+.reveal-voters{font-size:11px;color:#D4537E;margin-top:6px;}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;}
+.nav-btn{background:transparent;border:1px solid #F4C0D1;border-radius:8px;padding:8px 18px;font-size:14px;color:#993556;cursor:pointer;font-family:sans-serif;}
+.nav-btn:hover{background:#FFF5F8;}
+.nav-btn:disabled{opacity:.3;cursor:default;}
+.nav-btn.primary{background:#D4537E;border-color:#D4537E;color:#fff;}
+.nav-btn.primary:hover{background:#993556;}
+.q-counter{font-size:13px;color:#993556;}
+.name-screen{text-align:center;padding:1.5rem 1rem 1rem;}
+.name-screen h2{font-size:20px;font-weight:500;color:#4B1528;margin-bottom:6px;}
+.name-screen p{font-size:14px;color:#993556;margin-bottom:1.25rem;}
+.name-input{width:100%;max-width:260px;padding:10px 14px;font-size:15px;border:1px solid #F4C0D1;border-radius:8px;background:#fff;color:#4B1528;text-align:center;display:block;margin:0 auto 1.25rem;font-family:sans-serif;}
+.name-input:focus{outline:none;border-color:#D4537E;}
+.btn-pink{background:#D4537E;border:none;border-radius:8px;padding:10px 28px;color:#fff;font-size:14px;cursor:pointer;font-family:sans-serif;}
+.btn-pink:hover{background:#993556;}
+.btn-outline{background:transparent;border:1px solid #F4C0D1;border-radius:8px;color:#993556;font-size:13px;padding:8px 18px;cursor:pointer;font-family:sans-serif;}
+.btn-outline:hover{background:#FFF5F8;}
+.btn-outline:disabled{opacity:.5;cursor:default;}
+.demo-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+.seed-status{font-size:12px;color:#D4537E;margin-top:8px;min-height:18px;}
+.farewell-card{background:#FFF0F5;border:2px solid #F4C0D1;border-radius:20px;padding:2rem 1.5rem;text-align:center;margin-bottom:1.25rem;}
+.farewell-card h2{font-size:20px;font-weight:500;color:#4B1528;margin-bottom:8px;}
+.farewell-card p{font-size:14px;color:#993556;line-height:1.6;}
+.results-header{text-align:center;margin-bottom:1.25rem;}
+.results-header h2{font-size:20px;font-weight:500;color:#4B1528;}
+.results-header p{font-size:13px;color:#993556;margin-top:4px;}
+.results-actions{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.05em;color:#993556;text-transform:uppercase;margin:1.25rem 0 8px;}
+.result-card{background:#FFF5F8;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid #F4C0D1;}
+.result-card.nina{background:#EEEDFE;border-color:#CECBF6;}
+.rc-question{font-size:12px;color:#993556;margin-bottom:8px;line-height:1.4;}
+.result-card.nina .rc-question{color:#534AB7;}
+.rc-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.rc-bar-label{width:14px;font-weight:500;font-size:12px;color:#993556;flex-shrink:0;}
+.result-card.nina .rc-bar-label{color:#534AB7;}
+.rc-bar-track{flex:1;height:20px;background:#fff;border-radius:4px;overflow:hidden;}
+.result-card.nina .rc-bar-track{background:#CECBF6;}
+.rc-bar-fill{height:100%;border-radius:4px;background:#D4537E;display:flex;align-items:center;min-width:0;}
+.result-card.nina .rc-bar-fill{background:#7F77DD;}
+.rc-bar-fill.b{background:#ED93B1;}
+.result-card.nina .rc-bar-fill.b{background:#AFA9EC;}
+.rc-bar-text{font-size:11px;color:#fff;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rc-pct{font-size:11px;color:#993556;width:34px;text-align:right;flex-shrink:0;}
+.result-card.nina .rc-pct{color:#534AB7;}
+.rc-names{font-size:11px;margin-top:2px;padding-left:22px;line-height:1.8;}
+.rc-voters{font-size:10px;color:#D4537E;margin-top:6px;}
+.submitting{text-align:center;padding:2rem;font-size:14px;color:#993556;}
+.updated-at{font-size:11px;color:#D4537E;margin-top:6px;}
+.loading-inline{font-size:12px;color:#D4537E;margin-top:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.floating{animation:float 3s ease-in-out infinite;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <svg width="100%" height="120" viewBox="0 0 640 120" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect width="640" height="120" fill="#FFF0F5"/>
+      <ellipse cx="60" cy="75" rx="18" ry="22" fill="#ED93B1"/>
+      <path d="M60 53 Q63 45 60 40" stroke="#D4537E" stroke-width="1.5" fill="none"/>
+      <circle cx="60" cy="39" r="3" fill="#D4537E"/>
+      <line x1="42" y1="85" x2="30" y2="110" stroke="#D4537E" stroke-width="1.2"/>
+      <ellipse cx="115" cy="65" rx="14" ry="18" fill="#CECBF6"/>
+      <path d="M115 47 Q118 39 115 34" stroke="#7F77DD" stroke-width="1.5" fill="none"/>
+      <circle cx="115" cy="33" r="3" fill="#7F77DD"/>
+      <line x1="101" y1="74" x2="90" y2="110" stroke="#7F77DD" stroke-width="1.2"/>
+      <ellipse cx="155" cy="80" rx="12" ry="15" fill="#F5C4B3"/>
+      <path d="M155 65 Q157 58 155 53" stroke="#D85A30" stroke-width="1.5" fill="none"/>
+      <circle cx="155" cy="52" r="2.5" fill="#D85A30"/>
+      <line x1="143" y1="88" x2="134" y2="110" stroke="#D85A30" stroke-width="1.2"/>
+      <ellipse cx="570" cy="70" rx="18" ry="22" fill="#B5D4F4"/>
+      <path d="M570 48 Q573 40 570 35" stroke="#378ADD" stroke-width="1.5" fill="none"/>
+      <circle cx="570" cy="34" r="3" fill="#378ADD"/>
+      <line x1="552" y1="80" x2="540" y2="110" stroke="#378ADD" stroke-width="1.2"/>
+      <ellipse cx="520" cy="80" rx="14" ry="17" fill="#9FE1CB"/>
+      <path d="M520 63 Q523 55 520 50" stroke="#1D9E75" stroke-width="1.5" fill="none"/>
+      <circle cx="520" cy="49" r="2.5" fill="#1D9E75"/>
+      <line x1="506" y1="89" x2="496" y2="110" stroke="#1D9E75" stroke-width="1.2"/>
+      <ellipse cx="480" cy="88" rx="11" ry="14" fill="#FAC775"/>
+      <path d="M480 74 Q482 67 480 62" stroke="#BA7517" stroke-width="1.5" fill="none"/>
+      <circle cx="480" cy="61" r="2.5" fill="#BA7517"/>
+      <line x1="469" y1="95" x2="461" y2="110" stroke="#BA7517" stroke-width="1.2"/>
+      <circle cx="200" cy="88" r="11" fill="#FBEAF0" stroke="#F4C0D1" stroke-width="1"/>
+      <circle cx="200" cy="82" r="7" fill="#F4C0D1"/>
+      <ellipse cx="197" cy="80" rx="2" ry="2.5" fill="#fff"/><ellipse cx="203" cy="80" rx="2" ry="2.5" fill="#fff"/>
+      <circle cx="197" cy="80" r="1" fill="#72243E"/><circle cx="203" cy="80" r="1" fill="#72243E"/>
+      <path d="M196 85 Q200 88 204 85" stroke="#72243E" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <ellipse cx="196" cy="77" rx="3" ry="1.5" fill="#F0997B" opacity=".5"/><ellipse cx="204" cy="77" rx="3" ry="1.5" fill="#F0997B" opacity=".5"/>
+      <ellipse cx="192" cy="82" rx="3.5" ry="2" fill="#F4C0D1"/><ellipse cx="208" cy="82" rx="3.5" ry="2" fill="#F4C0D1"/>
+      <ellipse cx="200" cy="94" rx="6" ry="4" fill="#F4C0D1"/>
+      <circle cx="430" cy="85" r="12" fill="#FBEAF0" stroke="#F4C0D1" stroke-width="1"/>
+      <circle cx="430" cy="79" r="7.5" fill="#F5C4B3"/>
+      <ellipse cx="427" cy="77" rx="2" ry="2.5" fill="#fff"/><ellipse cx="433" cy="77" rx="2" ry="2.5" fill="#fff"/>
+      <circle cx="427" cy="77" r="1" fill="#72243E"/><circle cx="433" cy="77" r="1" fill="#72243E"/>
+      <path d="M427 82 Q430 85 433 82" stroke="#72243E" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <ellipse cx="426" cy="74" rx="3" ry="1.5" fill="#F0997B" opacity=".5"/><ellipse cx="434" cy="74" rx="3" ry="1.5" fill="#F0997B" opacity=".5"/>
+      <ellipse cx="422" cy="79" rx="3.5" ry="2" fill="#F4C0D1"/><ellipse cx="438" cy="79" rx="3.5" ry="2" fill="#F4C0D1"/>
+      <ellipse cx="430" cy="92" rx="6.5" ry="4" fill="#F5C4B3"/>
+      <path d="M0 108 Q160 90 320 108 Q480 126 640 108 L640 120 L0 120 Z" fill="#FBEAF0"/>
+    </svg>
+    <div class="hero-title">
+      <h1>Would you rather: baby edition</h1>
+      <p>Choose your fate — no right answers, just honest ones.</p>
+    </div>
+  </div>
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="pf" style="width:0%"></div></div>
+  <div class="content"><div id="app"></div></div>
+</div>
+
+<script>
+const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vRl1zv64IF4vsxymGFtzZ6AqR396fwUzjgaMXrITTAeb-MERcN-pFKuLvHQLUtW61qmaERRCIbVqmvq/pub?output=csv';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbyXjK7jZorR1kfzjdove6iiD74oH_1KZAYtfxXoskxligweFlWjo67w2vdtLKTUlyqL/exec';
+const questions=[
+  {q:"Would you rather...",a:"Change 10 diapers in a row",b:"Wake up 3 times a night for a week"},
+  {q:"Would you rather...",a:"Step on a Lego barefoot",b:"Get spit up on right before a meeting"},
+  {q:"Would you rather...",a:"Listen to a baby cry for 10 minutes",b:"Watch the same kids' show episode 5 times in a row"},
+  {q:"Would you rather...",a:"Assemble a stroller with no instructions",b:"Install a car seat correctly on the first try"},
+  {q:"Would you rather...",a:"Carry a baby around all day",b:"Push a stroller everywhere (even indoors)"},
+  {q:"Would you rather...",a:"Have Baby Shark stuck in your head permanently",b:"Only be able to hum lullabies at work"},
+  {q:"Would you rather...",a:"Clean a massive diaper blowout",b:"Do 3 loads of baby laundry daily"},
+  {q:"Would you rather...",a:"Always be the one who wakes up first",b:"Handle bedtime every single night"},
+  {q:"Would you rather...",a:"Forget the diaper bag at home",b:"Forget the baby wipes at home"},
+  {q:"Would you rather...",a:"Deal with teething",b:"Deal with sleep regression"},
+  {q:"Would you rather...",a:"Have toys all over your house",b:"Have sticky fingerprints on everything"},
+  {q:"Would you rather...",a:'Accidentally use baby talk in a work meeting',b:'Call a coworker "buddy" or "sweetie"'},
+  {q:"Would you rather...",sub:"Which schedule do you think Nina would secretly prefer?",a:"Have a baby who loves early mornings",b:"Have a baby who's a night owl",nina:true},
+  {q:"Would you rather...",sub:"Future mini-Nina energy?",a:"Baby grows up to love spreadsheets and organization",b:"Baby grows up to be super creative and messy",nina:true},
+];
+const TOTAL=questions.length;
+const demoPlayers=['Test_Alice','Test_Brenda','Test_Carlos','Test_Diana','Test_Evan'];
+let playerName='',answers=new Array(TOTAL).fill(null),current=0,phase='name',revealed=false,cachedRows=null;
+
+function setPct(p){document.getElementById('pf').style.width=p+'%';}
+function render(){
+  const app=document.getElementById('app');
+  if(phase==='name') renderName(app);
+  else if(phase==='quiz') renderQuiz(app);
+  else if(phase==='results') renderResults(app);
+}
+
+function renderName(app){
+  setPct(0);
+  app.innerHTML=`<div class="card"><div class="name-screen">
+    <svg width="64" height="64" viewBox="0 0 64 64" style="display:block;margin:0 auto 12px;" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" fill="#FBEAF0" stroke="#F4C0D1" stroke-width="1"/>
+      <circle cx="32" cy="27" r="13" fill="#F4C0D1"/>
+      <ellipse cx="27" cy="24" rx="3" ry="3.5" fill="#fff"/><ellipse cx="37" cy="24" rx="3" ry="3.5" fill="#fff"/>
+      <circle cx="27" cy="24" r="1.5" fill="#72243E"/><circle cx="37" cy="24" r="1.5" fill="#72243E"/>
+      <path d="M26 31 Q32 36 38 31" stroke="#72243E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="26" cy="21" rx="4" ry="2" fill="#F0997B" opacity=".5"/><ellipse cx="38" cy="21" rx="4" ry="2" fill="#F0997B" opacity=".5"/>
+      <ellipse cx="20" cy="27" rx="5" ry="3" fill="#F4C0D1"/><ellipse cx="44" cy="27" rx="5" ry="3" fill="#F4C0D1"/>
+      <ellipse cx="32" cy="43" rx="10" ry="7" fill="#F5C4B3"/>
+    </svg>
+    <h2>Welcome to the baby shower quiz!</h2>
+    <p>Enter your first name to get started.</p>
+    <input class="name-input" id="nameInput" type="text" placeholder="Your first name" maxlength="30"/>
+    <button class="btn-pink" onclick="startQuiz()">Let's go</button>
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #F4C0D1;">
+      <p style="font-size:12px;color:#D4537E;margin-bottom:8px;">Testing solo? Seed some fake players first.</p>
+      <div class="demo-row">
+        <button class="btn-outline" id="seedBtn" onclick="seedDemo()">Seed demo players</button>
+        <button class="btn-outline" id="clearBtn" onclick="clearDemo()">Clear demo data</button>
+      </div>
+      <div class="seed-status" id="seedStatus"></div>
+    </div>
+  </div></div>`;
+  document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')startQuiz();});
+  document.getElementById('nameInput').focus();
+}
+
+function startQuiz(){
+  const val=document.getElementById('nameInput').value.trim();
+  if(!val)return;
+  playerName=val;phase='quiz';revealed=false;render();
+}
+
+async function seedDemo(){
+  const btn=document.getElementById('seedBtn');
+  const status=document.getElementById('seedStatus');
+  btn.disabled=true;
+  status.textContent='Seeding...';
+  for(let i=0;i<demoPlayers.length;i++){
+    const ans=Array.from({length:TOTAL},()=>Math.random()<0.5?'A':'B');
+    try{
+      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:demoPlayers[i],answers:ans})});
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,600));
+    status.textContent=`Seeded ${i+1} of ${demoPlayers.length}...`;
+  }
+  btn.disabled=false;
+  status.textContent='Done! 5 fake players added. Clear them before the real shower.';
+}
+
+async function clearDemo(){
+  const btn=document.getElementById('clearBtn');
+  const status=document.getElementById('seedStatus');
+  btn.disabled=true;
+  status.textContent='Clearing...';
+  for(let i=0;i<demoPlayers.length;i++){
+    try{
+      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:demoPlayers[i],answers:Array(TOTAL).fill('DELETE'),delete:true})});
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,400));
+  }
+  btn.disabled=false;
+  status.textContent='Done! Double-check the Sheet for any remaining Test_ rows.';
+}
+
+async function sel(c){
+  answers[current]=c;
+  revealed=false;
+  renderQuiz(document.getElementById('app'));
+  await submitCurrent();
+  cachedRows=await fetchRows();
+  revealed=true;
+  renderQuiz(document.getElementById('app'));
+}
+
+async function submitCurrent(){
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:playerName,answers})});
+  }catch(e){}
+  await new Promise(r=>setTimeout(r,700));
+}
+
+async function fetchRows(){
+  let rows=[];
+  try{
+    const res=await fetch(CSV_URL+'&t='+Date.now());
+    const text=await res.text();
+    text.trim().split('\n').slice(1).forEach(line=>{
+      const cols=line.split(',');
+      const name=(cols[0]||'').replace(/"/g,'').trim();
+      if(!name)return;
+      const ans=[];
+      for(let i=0;i<TOTAL;i++) ans.push((cols[i+1]||'').replace(/"/g,'').trim().toUpperCase()||null);
+      rows.push({name,ans});
+    });
+  }catch(e){}
+  return rows;
+}
+
+function buildReveal(rows,qi,isNina){
+  const nA=[],nB=[];
+  rows.forEach(r=>{if(r.ans[qi]==='A')nA.push(r.name);else if(r.ans[qi]==='B')nB.push(r.name);});
+  const tot=nA.length+nB.length||1;
+  const ap=Math.round(nA.length/tot*100),bp=100-ap;
+  const fa=isNina?'nina-a':'',fb=isNina?'nina-b':'b';
+  const tag=(n)=>`<span class="name-tag${isNina?' nina':''}${n===playerName?' you':''}">${n}</span>`;
+  return`<hr class="reveal-divider"/>
+    <div class="reveal-label">How everyone voted so far</div>
+    <div class="reveal-bar-row">
+      <span class="reveal-bar-lbl">A</span>
+      <div class="reveal-bar-track"><div class="reveal-bar-fill ${fa}" style="width:${ap}%"><span class="reveal-bar-text">${questions[qi].a}</span></div></div>
+      <span class="reveal-pct">${ap}%</span>
+    </div>
+    ${nA.length?`<div class="reveal-names">${nA.map(tag).join('')}</div>`:''}
+    <div class="reveal-bar-row" style="margin-top:4px;">
+      <span class="reveal-bar-lbl">B</span>
+      <div class="reveal-bar-track"><div class="reveal-bar-fill ${fb}" style="width:${bp}%"><span class="reveal-bar-text">${questions[qi].b}</span></div></div>
+      <span class="reveal-pct">${bp}%</span>
+    </div>
+    ${nB.length?`<div class="reveal-names">${nB.map(tag).join('')}</div>`:''}
+    <div class="reveal-voters">${nA.length+nB.length} vote${nA.length+nB.length!==1?'s':''}</div>`;
+}
+
+function renderQuiz(app){
+  const q=questions[current];
+  setPct(Math.round((current+1)/TOTAL*100));
+  const myAns=answers[current];
+  const isLast=current===TOTAL-1;
+  let revealHTML='';
+  if(revealed&&cachedRows) revealHTML=buildReveal(cachedRows,current,!!q.nina);
+  else if(myAns&&!revealed) revealHTML=`<div class="loading-inline">Loading group results...</div>`;
+  app.innerHTML=`<div class="card">
+    ${q.nina?'<div class="nina-badge">Nina question</div>':''}
+    <div class="q-label">Question ${current+1} of ${TOTAL}</div>
+    <div class="q-text">${q.q}</div>
+    ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+    <div class="options">
+      <button class="opt-btn ${myAns==='A'?'sel':''}" onclick="sel('A')" ${myAns&&myAns!=='A'?'style="opacity:.6"':''}><span class="opt-label">A</span><br>${q.a}</button>
+      <button class="opt-btn ${myAns==='B'?'sel':''}" onclick="sel('B')" ${myAns&&myAns!=='B'?'style="opacity:.6"':''}><span class="opt-label">B</span><br>${q.b}</button>
+    </div>
+    ${revealHTML}
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="goBack()" ${current===0?'disabled':''}>Back</button>
+    <span class="q-counter">${playerName} · ${current+1}/${TOTAL}</span>
+    <button class="nav-btn primary" onclick="${isLast?'goToResults()':'nextQ()'}" ${!myAns||!revealed?'disabled':''}>${isLast?'See final results':'Next question'}</button>
+  </div>`;
+}
+
+function nextQ(){revealed=false;cachedRows=null;current=Math.min(TOTAL-1,current+1);render();}
+function goBack(){revealed=false;cachedRows=null;current=Math.max(0,current-1);render();}
+function goToResults(){phase='results';render();}
+
+function makeResultCard(rows,i,isNina){
+  const q=questions[i];
+  const nA=[],nB=[];
+  rows.forEach(r=>{if(r.ans[i]==='A')nA.push(r.name);else if(r.ans[i]==='B')nB.push(r.name);});
+  const tot=nA.length+nB.length||1;
+  const ap=Math.round(nA.length/tot*100),bp=100-ap;
+  const tag=n=>`<span class="name-tag${isNina?' nina':''}">${n}</span>`;
+  return`<div class="result-card${isNina?' nina':''}">
+    <div class="rc-question">${q.sub||q.q}</div>
+    <div class="rc-bar-row"><span class="rc-bar-label">A</span>
+      <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${ap}%"><span class="rc-bar-text">${q.a}</span></div></div>
+      <span class="rc-pct">${ap}%</span></div>
+    ${nA.length?`<div class="rc-names">${nA.map(tag).join('')}</div>`:''}
+    <div class="rc-bar-row" style="margin-top:4px;"><span class="rc-bar-label">B</span>
+      <div class="rc-bar-track"><div class="rc-bar-fill b" style="width:${bp}%"><span class="rc-bar-text">${q.b}</span></div></div>
+      <span class="rc-pct">${bp}%</span></div>
+    ${nB.length?`<div class="rc-names">${nB.map(tag).join('')}</div>`:''}
+    <div class="rc-voters">${nA.length+nB.length} vote${nA.length+nB.length!==1?'s':''}</div>
+  </div>`;
+}
+
+function refreshIcon(s){return`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle;${s?'animation:spin .7s linear infinite':''}"><path d="M12 7A5 5 0 1 1 7 2a5 5 0 0 1 3.5 1.4L12 2v4H8l1.6-1.6A3 3 0 1 0 10 7" stroke="#993556" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
+
+async function renderResults(app){
+  app.innerHTML=`<div class="submitting">Loading final results...</div>`;
+  const rows=await fetchRows();
+  const voters=rows.map(r=>r.name);
+  const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  app.innerHTML=`
+    <div class="farewell-card">
+      <svg class="floating" width="72" height="72" viewBox="0 0 72 72" style="display:block;margin:0 auto 14px;" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="20" cy="38" rx="10" ry="13" fill="#ED93B1"/>
+        <path d="M20 25 Q22 18 20 13" stroke="#D4537E" stroke-width="1.5" fill="none"/>
+        <circle cx="20" cy="12" r="3" fill="#D4537E"/>
+        <line x1="10" y1="49" x2="4" y2="68" stroke="#D4537E" stroke-width="1.2"/>
+        <ellipse cx="36" cy="30" rx="12" ry="16" fill="#CECBF6"/>
+        <path d="M36 14 Q39 6 36 1" stroke="#7F77DD" stroke-width="1.5" fill="none"/>
+        <circle cx="36" cy="0" r="3.5" fill="#7F77DD"/>
+        <line x1="24" y1="44" x2="16" y2="68" stroke="#7F77DD" stroke-width="1.2"/>
+        <ellipse cx="55" cy="36" rx="10" ry="13" fill="#9FE1CB"/>
+        <path d="M55 23 Q57 16 55 11" stroke="#1D9E75" stroke-width="1.5" fill="none"/>
+        <circle cx="55" cy="10" r="3" fill="#1D9E75"/>
+        <line x1="45" y1="47" x2="38" y2="68" stroke="#1D9E75" stroke-width="1.2"/>
+      </svg>
+      <h2>Congratulations Nina and Braden!</h2>
+      <p>Best of luck — we will miss you!</p>
+    </div>
+    <div class="results-header">
+      <h2>Here's how everyone voted, ${playerName}!</h2>
+      <p>Players so far: ${voters.length?voters.join(', '):'just you so far!'}</p>
+      <div class="results-actions">
+        <button class="btn-outline" id="refreshBtn" onclick="doRefresh()">${refreshIcon(false)} Refresh results</button>
+        <button class="btn-pink" style="padding:8px 18px;font-size:13px;" onclick="restart()">Play again</button>
+      </div>
+      <div class="updated-at">Last updated: ${now}</div>
+    </div>
+    <div class="section-label">The big questions</div>
+    ${questions.slice(0,12).map((_,i)=>makeResultCard(rows,i,false)).join('')}
+    <div class="section-label">Nina predictions</div>
+    ${questions.slice(12).map((_,i)=>makeResultCard(rows,12+i,true)).join('')}`;
+}
+
+async function doRefresh(){
+  const btn=document.getElementById('refreshBtn');
+  if(btn){btn.innerHTML=refreshIcon(true)+' Refreshing...';btn.disabled=true;}
+  await renderResults(document.getElementById('app'));
+}
+
+function restart(){answers=new Array(TOTAL).fill(null);current=0;phase='name';revealed=false;cachedRows=null;render();}
+render();
+</script>
+</body>
+</html>
